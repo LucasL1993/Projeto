@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html ng-app ="Gerenciador">
+<head>
+	<title>Gerenciador de usuarios</title>
+	<meta charset="UTF-8">
+	<link rel = "stylesheet" type="text/css" href="lib/bootstrap/CSS/bootstrap.css">
+	<style type="text/css">
+		.selecionado{
+			background-color:#FA8072;
+		}
+	</style>
+
+<script src="lib/angular/angular.min.js"></script>
+<script>
+	angular.module("Gerenciador",[]);
+	angular.module("Gerenciador").controller("GerenciadorCtrl",function ($scope) {
+
+		$scope.app = "Gerenciador de usuarios";
+		$scope.usuarios = [
+		{ nome: "Lucas", telefone: "000000000", email:"lucas@xxx.com"},
+		{ nome: "Teste", telefone: "111111111", email:"Teste@xxx.com"}
+		];
+
+		$scope.adicionarUsuario = function(usuario){
+
+			$scope.usuarios.push(usuario);
+			delete $scope.usuario;
+			$scope.usuarioForm.$setPristine();
+
+		};
+
+		$scope.deletarUsuario = function(usuarios){
+			$scope.usuarios =  usuarios.filter(function(usuario) {
+				if(!usuario.selecionado) return usuario;
+			});
+}
+
+			$scope.isUsuarioSelecionado = function(usuarios){
+				return isUsuarioSelecionado = usuarios.some(function(usuario){
+					return usuario.selecionado;
+				})
+			}
+
+			$scope.ordenarPor = function(campo){
+				$scope.criterioDeOrdenacao = campo;
+				$scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
+
+			};
+
+		
+	});
+
+
+</script>
+</head>
+<body ng-controller ="GerenciadorCtrl">
+<div class="container">
+ <div class="row">
+	<div class = "col-6 jumbotron">
+		<h4>Gerenciador</h4>
+		<input type = "text" ng-model="buscar" placeholder="Localizar usuário"/>
+
+		<table ng-show ="usuarios.length>0" class = "table table-hover table-responsive table-bordered">
+			<tr>
+			<th></th>
+				<th><a href="" ng-click="ordenarPor('nome')">Nome</th>
+				<th><a href="" ng-click="ordenarPor('telefone')">Telefone</th>
+				<th><a href="" ng-click="ordenarPor('email')">Email</th>
+
+			</tr>
+			<tr ng-class = "{selecionado: usuario.selecionado}"" ng-repeat="usuario in usuarios | filter:buscar | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+			<td><input type="checkbox" ng-model="usuario.selecionado"/></td>
+				
+					<td>{{usuario.nome | uppercase}}</td>
+					<td>{{usuario.telefone }}</td>
+					<td>{{usuario.email | lowercase}}</td>
+				</td>
+			</tr>
+		</table>
+		<hr/>
+
+		<form name="usuarioForm">
+
+		<input  class="form-control" type="text" placeholder ="nome" ng-model="usuario.nome" name = "nome" ng-required="true"/>
+		<input class="form-control" type="text" placeholder ="telefone"  name = "telefone" ng-model="usuario.telefone" ng-pattern="/^\d{4,5}-\d{4}$/" ng-required="true"/>
+		<input class="form-control" type="text" placeholder ="email" ng-model="usuario.email" name = "email" ng-pattern = "/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|'(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/" ng-required="true" />
+
+		</form>
+
+
+		<div ng-show="usuarioForm.nome.$invalid && usuarioForm.nome.$dirty" class="alert alert-danger">
+			Preencha o campo nome!
+			</div>
+			<div ng-show="usuarioForm.telefone.$error.required && usuarioForm.telefone.$dirty" class="alert alert-danger">
+			Preencha o campo telefone!
+			</div>
+
+			<div ng-show="usuarioForm.telefone.$error.pattern" class="alert alert-danger">
+			O campo telefone deve ser formado por numeros da seguinte forma ex: 00000-0000 ou 0000-0000
+			</div>
+			<div ng-show="usuarioForm.email.$invalid && usuarioForm.email.$dirty" class="alert alert-danger">
+			Preencha o campo email!
+			</div>
+
+			<div ng-show="usuarioForm.email.$error.pattern" class="alert alert-danger">
+			Email deve conter @.com  ex: contrate@olucas.com
+			</div>
+
+		<button class = "col-4 btn btn-block" ng-disabled="usuarioForm.$invalid" ng-click="adicionarUsuario(usuario)">Adicionar Usuario</button>
+
+		<button class = "col-4 btn  btn-block" ng-click="deletarUsuario(usuarios)" ng-disabled="!isUsuarioSelecionado(usuarios)"" >Deletar Usuario</button>
+
+
+	</div>
+	</div>
+	</div>
+<footer>
+	Criado por Lucas 
+</footer>
+</body>
+</html>
